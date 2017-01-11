@@ -32,6 +32,31 @@ exports.serveAssets = function(res, asset, callback) {
   });
 };
 
+exports.postAssets = function(res, req, callback) {
+  var filePath = path.normalize(archive.paths.list);
+
+  req.on('error', function(err, data) {
+    callback(err);
+  });
+
+  var data = '';
+  req.on('data', function(chunk) {
+    data += chunk.toString();
+  });
+
+  req.on('end', function() {
+    var urlToAppend = data.slice(4) + '\n';
+    fs.appendFile(filePath, urlToAppend, function(err, data) {
+      if (err) {
+        callback(err);
+      } else {
+        callback(null, data);
+      }
+    });
+  });
+
+
+};
 
 
 // As you progress, keep thinking about what helper functions you can put here!
