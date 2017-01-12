@@ -45,17 +45,19 @@ exports.postAssets = function(res, req, callback) {
   });
 
   req.on('end', function() {
-    var urlToAppend = data.slice(4) + '\n';
-    fs.appendFile(filePath, urlToAppend, function(err) {
-      if (err) {
-        callback(err);
-      } else {
-        callback(null);
+    var urlToAppend = data.replace(/\"/g, '').slice(4) + '\n';
+    archive.isUrlInList(urlToAppend, (err, exists) => {
+      if (!exists) {
+        fs.appendFile(filePath, urlToAppend, function(err) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null);
+          }
+        });
       }
     });
   });
-
-
 };
 
 

@@ -2,11 +2,34 @@
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="styles.css" />
+  <script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
 </head>
 <body>
   Enter a URL here:
-  <form method="POST">
-    <input type="input" name="url"></input>
+  <form id="submit" method="POST">
+    <input id="input" type="input" name="url"></input>
   </form>
+  <script>
+    $('#submit').submit((e) => {
+      e.preventDefault();
+      var url = 'url=' + $('#input').val();
+      console.log(url);
+      $.ajax({
+        url: '/',
+        type: 'POST',
+        contentType: 'text/plain',
+        data: JSON.stringify(url),
+        success: function(data) {
+          console.log('Site archived!');
+        },
+        // error: function(data) {
+        //   console.error('YOU FAIL! :(', data);
+        // }
+      });
+    });
+  </script>
 </body>
 </html>

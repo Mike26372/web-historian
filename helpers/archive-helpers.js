@@ -42,7 +42,7 @@ exports.isUrlInList = function(url, callback) {
     if (err) {
       callback(err);
     } else {
-      callback(null, _.contains(urls, url));
+      callback(null, _.contains(urls, url.replace(/\n/g, '')));
     }
   });
 };
