@@ -46,11 +46,11 @@ exports.postAssets = function(res, req, callback) {
 
   req.on('end', function() {
     var urlToAppend = data.slice(4) + '\n';
-    fs.appendFile(filePath, urlToAppend, function(err, data) {
+    fs.appendFile(filePath, urlToAppend, function(err) {
       if (err) {
         callback(err);
       } else {
-        callback(null, data);
+        callback(null);
       }
     });
   });
