@@ -57,6 +57,14 @@ exports.addUrlToList = function(url, callback) {
 };
 
 exports.isUrlArchived = function(url, callback) {
+  var filePath = path.normalize(exports.paths.archivedSites + '/' + url);
+  fs.readFile(filePath, 'utf8', function(err, data) {
+    if (err) {
+      callback(null, false);
+    } else {
+      callback(null, true);
+    }
+  });
 };
 
 exports.downloadUrls = function(arr) {
