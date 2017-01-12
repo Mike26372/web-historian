@@ -3,7 +3,6 @@ var archive = require('../helpers/archive-helpers');
 var httpHelpers = require('./http-helpers.js');
 
 exports.handleRequest = function (req, res) {
-  
   if (req.method === 'GET') {
     httpHelpers.serveAssets(res, req.url, function(err, data) {
       if (err) {
