@@ -68,4 +68,18 @@ exports.isUrlArchived = function(url, callback) {
 };
 
 exports.downloadUrls = function(arr) {
+  arr.forEach(function(url) {
+    exports.isUrlArchived(url, (err, exists) => {
+      if (!exists) {
+        var filePath = path.normalize(`${exports.paths.archivedSites}/${url}`);
+        fs.writeFile(filePath, 'doodoo (to do)', function(err) {
+          if (err) {
+            console.error(err);
+          } else {
+            console.log(`${url} archived!`);
+          }
+        });
+      }
+    });
+  });
 };
