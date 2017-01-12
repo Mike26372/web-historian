@@ -61,6 +61,7 @@ exports.isUrlArchived = function(url, callback) {
   var filePath = path.normalize(exports.paths.archivedSites + '/' + url);
   fs.readFile(filePath, 'utf8', function(err, data) {
     if (err) {
+      console.error(err);
       callback(null, false);
     } else {
       callback(null, true);

@@ -15,8 +15,10 @@ exports.serveAssets = function(res, asset, callback) {
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
   var filePath;
-  if (asset === '/') {
+  if (asset === '/' || asset === '/index.html') {
     asset = '/index.html';
+    filePath = path.normalize(archive.paths.siteAssets + asset);
+  } else if (asset === '/loading.html') {
     filePath = path.normalize(archive.paths.siteAssets + asset);
   } else {
     filePath = path.normalize(archive.paths.archivedSites + asset);
@@ -45,14 +47,23 @@ exports.postAssets = function(res, req, callback) {
   });
 
   req.on('end', function() {
-    var urlToAppend = data.replace(/\"/g, '').slice(4) + '\n';
+    var getUrl = data.replace(/\"/g, '').slice(4);
+    var urlToAppend = getUrl + '\n';
     archive.isUrlInList(urlToAppend, (err, exists) => {
       if (!exists) {
         fs.appendFile(filePath, urlToAppend, function(err) {
           if (err) {
             callback(err);
           } else {
-            callback(null);
+            callback(null, '/loading.html');
+          }
+        });
+      } else {
+        archive.isUrlArchived(getUrl, function(url, exists) {
+          if (exists) {
+            callback(null, '/' + getUrl);
+          } else {
+            callback(null, '/loading.html');
           }
         });
       }
