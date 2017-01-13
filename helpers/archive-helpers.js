@@ -2,6 +2,9 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var request = require('request');
+var Promise = require('bluebird');
+var rp = require('request-promise');
+var writeFileAsync = require('fs-writefile-promise');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -89,5 +92,43 @@ exports.downloadUrls = function(arr) {
         });
       }
     });
+  });
+};
+
+var readFileAsync = Promise.promisify(fs.readFile);
+var appendFileAsync = Promise.promisify(fs.appendFile);
+
+
+exports.readListOfUrlsAsync = function() {
+  return readFileAsync(exports.paths.list, 'utf8')
+    .then( data => data.split('\n') )
+    .catch( err => { console.error(err); });
+};
+
+exports.isUrlInListAsync = function(url) {
+  return readListOfUrlsAsync()
+    .then( dataArr => _.contains(dataArr, url.replace(/\n/g, '')))
+    .catch( err => { console.error(err); });
+};
+
+exports.addUrlToListAsync = function(url) {
+  return appendFileAsync(exports.paths.list, `${url}\n`)
+    .catch( err => { console.error(err); });
+};
+
+exports.isUrlArchivedAsync = function(url) {
+  var filePath = path.normalize(exports.paths.archivedSites + '/' + url);
+  return readFileAsync(filePath, 'utf8')
+    .then( data => true )
+    .catch( err => false );
+};
+
+exports.downloadUrlsAsync = function(arr) {
+  arr.forEach( url => {
+    var filePath = path.normalize(`${exports.paths.archivedSites}/${url}`);
+    exports.isUrlArchivedAsync(url)
+      .then( exists => !exists ? rp(`http://${url}`) : rp(''))
+      .then( html => writeFileAsync(filePath, html))
+      .catch( err => { });
   });
 };

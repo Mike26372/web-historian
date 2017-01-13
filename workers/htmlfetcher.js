@@ -2,8 +2,6 @@
 // that are waiting.
 var archive = require('../helpers/archive-helpers');
 
-archive.readListOfUrls((err, urls) => {
-  archive.downloadUrls(urls);
-});
-
-console.log('scraped! via cronjob');
+archive.readListOfUrlsAsync()
+  .then( urls => archive.downloadUrlsAsync(urls))
+  .catch( err => { console.error(err); });
